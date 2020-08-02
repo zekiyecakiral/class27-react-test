@@ -1,19 +1,21 @@
-import React, { useState} from "react";
-
+import React, { useState } from "react";
+import Spinner from "react-bootstrap/Spinner";
 const END_POINT = "https://randomuser.me/api/?results=5";
 
 function NewUser() {
   const [user, setUser] = useState({});
   const [loaded, setLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
   const fetchUser = async () => {
     setLoaded(false);
+    setLoading(true);
     const response = await fetch(END_POINT);
     response
       .json()
       .then((res) => {
-          console.log(res);
+        console.log(res);
         const {
           name: { title, first, last },
           picture: { medium },
@@ -21,6 +23,7 @@ function NewUser() {
         } = res.results[0];
         setUser({ title, first, last, medium, id });
         setLoaded(true);
+        setLoading(false);
       })
       .catch((error) => {
         setHasError(true);
@@ -29,7 +32,12 @@ function NewUser() {
   };
 
   return (
-    <div>
+    <div >
+      {loading && (
+        <Spinner animation="border" role="status" size="sm">
+          <span className="sr-only">Loading...</span>
+        </Spinner>
+      )}
       <Button func={fetchUser} context="Get New User" />
       {loaded && <UserProfile user={user} />}
       {hasError && <p>Something went wrong ...</p>}
