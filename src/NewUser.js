@@ -1,69 +1,49 @@
 import React, { useState } from "react";
-import Spinner from "react-bootstrap/Spinner";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import FetchedUserData from './FetchedUserData'
+import UserCard from './UserCard'
+import Button from '@material-ui/core/Button';
+
 const END_POINT = "https://randomuser.me/api/?results=5";
 
 function NewUser() {
-  const [user, setUser] = useState({});
-  const [loaded, setLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loaded,setLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [userList, setUserList] = useState([]);
 
   const fetchUser = async () => {
-    setLoaded(false);
     setLoading(true);
+    setLoaded(false);
     const response = await fetch(END_POINT);
     response
       .json()
       .then((res) => {
-        console.log(res);
-        const {
-          name: { title, first, last },
-          picture: { medium },
-          id,
-        } = res.results[0];
-        setUser({ title, first, last, medium, id });
-        setLoaded(true);
+        setUserList(res.results);
         setLoading(false);
+        setLoaded(true);
       })
       .catch((error) => {
         setHasError(true);
-        setLoaded(false);
       });
   };
 
+  function getUserList() {
+    fetchUser();
+  }
+
   return (
-    <div >
-      {loading && (
-        <Spinner animation="border" role="status" size="sm">
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      )}
-      <Button func={fetchUser} context="Get New User" />
-      {loaded && <UserProfile user={user} />}
+    <div className='container'>
+      {loading && <CircularProgress color="secondary" />}
+      <Button variant="contained" color="secondary" onClick={getUserList}>Get New User</Button>
+      {loaded && <FetchedUserData userList ={userList}/>}  
       {hasError && <p>Something went wrong ...</p>}
+      {loaded && <UserCard/>}
+   
     </div>
   );
 }
 
-function UserProfile({ user }) {
-  return (
-    <div>
-      <div>
-        <p>
-          {user.title} {user.first} {user.last}
-        </p>
-        <img src={user.medium} alt="user image" />
-      </div>
-    </div>
-  );
-}
 
-function Button(props) {
-  return (
-    <div>
-      <button onClick={props.func}>{props.context}</button>
-    </div>
-  );
-}
 
 export default NewUser;
