@@ -1,7 +1,9 @@
 import React from "react";
+import NewUser from './NewUser'
+import './App.css';
 
 function App() {
-  return <div>Good luck with the test students!</div>;
+  return <div><NewUser/></div>;
 }
 
 export default App;
