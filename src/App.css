@@ -13,3 +13,8 @@
 
 }
 
+p:hover {
+  background-color: #f1e8eb;
+  cursor: pointer;
+}
+

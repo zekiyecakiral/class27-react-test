@@ -25,6 +25,7 @@ function NewUser() {
       })
       .catch((error) => {
         setHasError(true);
+        setLoading(false);
       });
   };
 
